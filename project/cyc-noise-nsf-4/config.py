@@ -18,22 +18,22 @@ __copyright__ = "Copyright 2020, Xin Wang"
 # Name of datasets
 #  after data preparation, trn/val_set_name are used to save statistics 
 #  about the data sets
-trn_set_name = 'cmu_all_trn'
-val_set_name = 'cmu_all_val'
+trn_set_name = 'lili_trn'
+val_set_name = 'lili_val'
 
 # for convenience
-tmp = '../DATA/cmu-arctic-data-set'
+tmp = '../DATA/lili'
 
 # File lists (text file, one data name per line, without name extension)
 # trin_file_list: list of files for training set
 trn_list = tmp + '/scp/train.lst'  
 # val_file_list: list of files for validation set. It can be None
-val_list = tmp + '/scp/val.lst'
+val_list = tmp + '/scp/validation.lst'
 
 # Directories for input features
 # input_dirs = [path_of_feature_1, path_of_feature_2, ..., ]
 #  we assume train and validation data are put in the same sub-directory
-input_dirs = [tmp + '/5ms/melspec', tmp + '/5ms/f0']
+input_dirs = [tmp + '/5ms/mspec', tmp + '/5ms/f0']
 
 # Dimensions of input features
 # input_dims = [dimension_of_feature_1, dimension_of_feature_2, ...]
@@ -42,7 +42,7 @@ input_dims = [80, 1]
 # File name extension for input features
 # input_exts = [name_extention_of_feature_1, ...]
 # Please put ".f0" as the last feature
-input_exts = ['.mfbsp', '.f0']
+input_exts = ['.mspec', '.f0']
 
 # Temporal resolution for input features
 # input_reso = [reso_feature_1, reso_feature_2, ...]
@@ -82,19 +82,16 @@ minimum_len = 80 * 50
 #########################################################
 # similar options to training stage
 
-test_set_name = 'cmu_all_test_tiny'
+test_set_name = 'lili_test'
 
 # List of test set data
 # for convenience, you may directly load test_set list here
-test_list = ['slt_arctic_b0474', 'slt_arctic_b0475', 'slt_arctic_b0476',
-             'bdl_arctic_b0474', 'bdl_arctic_b0475', 'bdl_arctic_b0476',
-             'rms_arctic_b0474', 'rms_arctic_b0475', 'rms_arctic_b0476',
-             'clb_arctic_b0474', 'clb_arctic_b0475', 'clb_arctic_b0476']
+test_list = ['scov1100', 'sadt0007', 'scov1110']
 
 # Directories for input features
 # input_dirs = [path_of_feature_1, path_of_feature_2, ..., ]
 #  we assume train and validation data are put in the same sub-directory
-test_input_dirs = [tmp + '/5ms/melspec', tmp + '/5ms/f0']
+test_input_dirs = [tmp + '/5ms/mspec', tmp + '/5ms/f0']
 
 # Directories for output features, which are []
 test_output_dirs = []
