@@ -75,7 +75,7 @@ def f_args_parsed(argument_input = None):
                         help='shuffle data? (default true)')
 
     mes = 'number of parallel workers to load data (default: 0)'
-    parser.add_argument('--num-workers', type=int, default=0, \
+    parser.add_argument('--num-workers', type=int, default=10, \
                         metavar='N', help=mes)
 
     mes = 'use DataParallel to levarage multiple GPU (default: False)'
@@ -129,7 +129,7 @@ def f_args_parsed(argument_input = None):
     
     mes = 'verbose level 0: nothing; 1: print error per utterance'
     mes = mes + ' (default: 1)'
-    parser.add_argument('--verbose', type=int, default=1, metavar='N',
+    parser.add_argument('--verbose', type=int, default=0, metavar='N',
                         help=mes)
     
     #

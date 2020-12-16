@@ -12,6 +12,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import time
 import datetime
+from tqdm import tqdm
 
 import core_scripts.data_io.conf as nii_dconf
 import core_scripts.other_tools.display as nii_display
@@ -96,11 +97,12 @@ def f_run_one_epoch(args,
     """
     # timer
     start_time = time.time()
-        
+    
     # loop over samples
-    for data_idx, (data_in, data_tar, data_info, idx_orig) in \
-        enumerate(data_loader):
-
+    pbar = tqdm(data_loader)
+    epoch_num = monitor.get_max_epoch()
+    for data_idx, (data_in, data_tar, data_info, idx_orig) in enumerate(pbar):
+        pbar.set_description("Epoch: {}/{}".format(epoch_idx, epoch_num))
         # idx_orig is the original idx in the dataset
         # which can be different from data_idx when shuffle = True
         #idx_orig = idx_orig.numpy()[0]
@@ -191,6 +193,7 @@ def f_run_one_epoch(args,
         start_time = time.time()
             
     # lopp done
+    pbar.close()
     return
     
 

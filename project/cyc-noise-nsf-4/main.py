@@ -61,7 +61,7 @@ def main():
             prj_conf.output_dims, \
             prj_conf.output_reso, \
             prj_conf.output_norm, \
-            './', 
+            args.save_model_dir, 
             params = params,
             truncate_seq = prj_conf.truncate_seq, 
             min_seq_len = prj_conf.minimum_len,
@@ -83,7 +83,7 @@ def main():
                 prj_conf.output_dims, \
                 prj_conf.output_reso, \
                 prj_conf.output_norm, \
-                './', \
+                args.save_model_dir, \
                 params = params,
                 truncate_seq= prj_conf.truncate_seq, 
                 min_seq_len = prj_conf.minimum_len,
@@ -140,7 +140,7 @@ def main():
             prj_conf.output_dims, 
             prj_conf.output_reso, 
             prj_conf.output_norm,
-            './',
+            args.save_model_dir,
             params = params,
             truncate_seq = None,
             min_seq_len = None,

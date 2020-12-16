@@ -18,11 +18,15 @@ __copyright__ = "Copyright 2020, Xin Wang"
 # Name of datasets
 #  after data preparation, trn/val_set_name are used to save statistics 
 #  about the data sets
-trn_set_name = 'lili_trn'
-val_set_name = 'lili_val'
+voice = 'binbin'
+trn_set_name = voice + '_trn'
+val_set_name = voice + '_val'
+
+# Milliseconds per frame
+frame_dur = 10
 
 # for convenience
-tmp = '../DATA/lili'
+tmp = '../DATA/' + voice
 
 # File lists (text file, one data name per line, without name extension)
 # trin_file_list: list of files for training set
@@ -33,7 +37,7 @@ val_list = tmp + '/scp/validation.lst'
 # Directories for input features
 # input_dirs = [path_of_feature_1, path_of_feature_2, ..., ]
 #  we assume train and validation data are put in the same sub-directory
-input_dirs = [tmp + '/5ms/mspec', tmp + '/5ms/f0']
+input_dirs = [tmp + '/' + str(frame_dur) + 'ms/mspec', tmp + '/' + str(frame_dur) + 'ms/f0']
 
 # Dimensions of input features
 # input_dims = [dimension_of_feature_1, dimension_of_feature_2, ...]
@@ -49,7 +53,7 @@ input_exts = ['.mspec', '.f0']
 #  for waveform modeling, temporal resolution of input acoustic features
 #  may be = waveform_sampling_rate * frame_shift_of_acoustic_features
 #  for example, 80 = 16000 Hz * 5 ms 
-input_reso = [80, 80]
+input_reso = [160, 160]
 
 # Whether input features should be z-normalized
 # input_norm = [normalize_feature_1, normalize_feature_2]
@@ -82,16 +86,16 @@ minimum_len = 80 * 50
 #########################################################
 # similar options to training stage
 
-test_set_name = 'lili_test'
+test_set_name = voice + '_test'
 
 # List of test set data
 # for convenience, you may directly load test_set list here
-test_list = ['scov1100', 'sadt0007', 'scov1110']
+test_list = ['scov1100', 'scov1112', 'scov1110']
 
 # Directories for input features
 # input_dirs = [path_of_feature_1, path_of_feature_2, ..., ]
 #  we assume train and validation data are put in the same sub-directory
-test_input_dirs = [tmp + '/5ms/mspec', tmp + '/5ms/f0']
+test_input_dirs = [tmp + '/' + str(frame_dur) + 'ms/mspec', tmp + '/' + str(frame_dur) + 'ms/f0']
 
 # Directories for output features, which are []
 test_output_dirs = []

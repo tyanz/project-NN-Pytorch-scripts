@@ -356,8 +356,8 @@ class AudioProcessor(object):
         sr, x = io.wavfile.read(wav_file)
         bn = os.path.basename(wav_file)
         f0_file_path = os.path.join(f0_dir, bn.split('.')[0] + ".f0")
-        f0 =  pysptk.swipe(
-                x.astype(np.float64), 
+        f0 =  pysptk.rapt(
+                x.astype(np.float32), 
                 fs=sr, 
                 hopsize=self.hop_length,
                 min=self.pitch_floor,
@@ -366,29 +366,63 @@ class AudioProcessor(object):
         f0.tofile(f0_file_path)
         return f0_file_path
 
+_voice_config_dict = {
+        "lili": {
+            "sample_rate": 16000, 
+            "hop_length": 160, 
+            "win_length": 320, 
+            "num_freq": 161, 
+            "num_mels": 80, 
+            "min_level_db": -100,
+            "ref_level_db": 20,
+            "preemphasis": 0.98,
+            "mel_fmin": 75,
+            "mel_fmax": 8000,
+            "pitch_floor": 75,
+            "pitch_ceiling": 500
+            },
+        "binbin": {
+            "sample_rate": 16000, 
+            "hop_length": 160, 
+            "win_length": 320, 
+            "num_freq": 161, 
+            "num_mels": 80, 
+            "min_level_db": -100,
+            "ref_level_db": 20,
+            "preemphasis": 0.98,
+            "mel_fmin": 50,
+            "mel_fmax": 8000,
+            "pitch_floor": 50,
+            "pitch_ceiling": 350
+            }
+        }
+
+
 def main(args):
     wav_dir = args.wav_dir
     mel_dir = args.mel_dir
     f0_dir = args.f0_dir
+    voice = args.voice
+    voice_cfg = _voice_config_dict[voice]
     ap = AudioProcessor(
-                 sample_rate=16000,
-                 num_mels=80,
-                 min_level_db=-100,
-                 hop_length=80,
-                 win_length=320,
-                 ref_level_db=20,
-                 num_freq=161,
-                 preemphasis=0.98,
-                 signal_norm=True,
-                 symmetric_norm=False,
-                 max_norm=1,
-                 mel_fmin=75,
-                 mel_fmax=8000,
-                 pitch_floor=75,
-                 pitch_ceiling=500,
-                 clip_norm=True,
-                 do_trim_silence=False,
-                 verbose=True)
+                 sample_rate     = voice_cfg["sample_rate"],
+                 num_mels        = voice_cfg["num_mels"],
+                 min_level_db    = voice_cfg["min_level_db"],
+                 hop_length      = voice_cfg["hop_length"],
+                 win_length      = voice_cfg["win_length"],
+                 ref_level_db    = voice_cfg["ref_level_db"],
+                 num_freq        = voice_cfg["num_freq"],
+                 preemphasis     = voice_cfg["preemphasis"],
+                 signal_norm     = True,
+                 symmetric_norm  = False,
+                 max_norm        = 1,
+                 mel_fmin        = voice_cfg["mel_fmin"],
+                 mel_fmax        = voice_cfg["mel_fmax"],
+                 pitch_floor     = voice_cfg["pitch_floor"],
+                 pitch_ceiling   = voice_cfg["pitch_ceiling"],
+                 clip_norm       = True,
+                 do_trim_silence = False,
+                 verbose         = True)
 
     for fn in tqdm(os.listdir(wav_dir)):
         if not fn.endswith(".wav"):
@@ -421,5 +455,10 @@ if __name__ == "__main__":
             type=str,
             help="output directroy storing f0s",
             default='')
+    parser.add_argument(
+            "--voice",
+            type=str,
+            help="voice name",
+            default='lili')
     args = parser.parse_args()
     main(args)
