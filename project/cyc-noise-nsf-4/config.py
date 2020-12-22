@@ -18,7 +18,7 @@ __copyright__ = "Copyright 2020, Xin Wang"
 # Name of datasets
 #  after data preparation, trn/val_set_name are used to save statistics 
 #  about the data sets
-voice = 'binbin'
+voice = 'lili'
 trn_set_name = voice + '_trn'
 val_set_name = voice + '_val'
 
