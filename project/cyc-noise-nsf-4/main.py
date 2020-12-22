@@ -19,6 +19,7 @@ import core_scripts.config_parse.config_parse as nii_config_parse
 import core_scripts.config_parse.arg_parse as nii_arg_parse
 import core_scripts.op_manager.op_manager as nii_op_wrapper
 import core_scripts.nn_manager.nn_manager as nii_nn_wrapper
+import sandbox.nn_manager_GAN as nii_gan_wrapper
 
 import model as prj_model
 import config as prj_conf
@@ -96,10 +97,14 @@ def main():
         model = prj_model.Model(trn_set.get_in_dim(), \
                                 trn_set.get_out_dim(), \
                                 args, trn_set.get_data_mean_std())
+        
+        discriminator = prj_model.MelGANMultiScaleDiscriminator() if args.use_gan else None
+
         loss_wrapper = prj_model.Loss(args)
         
         # initialize the optimizer
         optimizer_wrapper = nii_op_wrapper.OptimizerWrapper(model, args)
+        optimizer_D_wrapper = nii_op_wrapper.OptimizerWrapper(discriminator, args) if args.use_gan else None
 
         # if necessary, resume training
         if args.trained_model == "":
@@ -108,10 +113,16 @@ def main():
             checkpoint = torch.load(args.trained_model)
             
         # start training
-        nii_nn_wrapper.f_train_wrapper(args, model, 
-                                       loss_wrapper, device,
-                                       optimizer_wrapper,
-                                       trn_set, val_set, checkpoint)
+        if not args.use_gan:
+            nii_nn_wrapper.f_train_wrapper(args, model, 
+                                           loss_wrapper, device,
+                                           optimizer_wrapper,
+                                           trn_set, val_set, checkpoint)
+        else:
+            nii_gan_wrapper.f_train_wrapper(args, model, discriminator,
+                                           loss_wrapper, device,
+                                           optimizer_wrapper, optimizer_D_wrapper,
+                                           trn_set, val_set, checkpoint)
         # done for traing
 
     else:

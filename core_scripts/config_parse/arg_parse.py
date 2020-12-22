@@ -126,7 +126,9 @@ def f_args_parsed(argument_input = None):
     mes = 'which optimizer to use (Adam | SGD, default: Adam)'
     parser.add_argument('--optimizer', type=str, default='Adam', \
                         metavar='str', help=mes)
-    
+    mes = 'use GAN or not'
+    parser.add_argument('--use-gan', action='store_true', \
+                        default=False, help=mes)
     mes = 'verbose level 0: nothing; 1: print error per utterance'
     mes = mes + ' (default: 1)'
     parser.add_argument('--verbose', type=int, default=0, metavar='N',
