@@ -42,8 +42,9 @@ class OptimizerWrapper():
 
         # create optimizer
         if self.op_flag == "Adam":
-            self.optimizer = torch_optim.Adam(model.parameters(), \
-                                              lr = self.lr)
+            self.optimizer = torch_optim.Adam(model.parameters(), lr=self.lr)
+        elif self.op_flag == "RMSprop":
+            self.optimizer = torch_optim.RMSprop(model.parameters(), lr=self.lr)
         else:
             nii_warn.f_print("%s not availabel" % (self.op_flag),
                              "error")

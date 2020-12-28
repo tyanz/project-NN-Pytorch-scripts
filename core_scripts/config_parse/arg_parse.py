@@ -123,12 +123,19 @@ def f_args_parsed(argument_input = None):
     mes = 'path to save generated data (default: ./output)'
     parser.add_argument('--output-dir', type=str, default="./output", \
                         help=mes)
-    mes = 'which optimizer to use (Adam | SGD, default: Adam)'
+    mes = 'which optimizer to use (Adam | RMSprop, default: Adam)'
     parser.add_argument('--optimizer', type=str, default='Adam', \
                         metavar='str', help=mes)
     mes = 'use GAN or not'
     parser.add_argument('--use-gan', action='store_true', \
                         default=False, help=mes)
+    mes = 'use Wasserstein GAN or not'
+    parser.add_argument('--use-wgan', action='store_true', \
+                        default=False, help=mes)
+    mes = 'Wasserstein GAN num of critic step per generator step'
+    parser.add_argument('--wgan-critic-num', type=int, default=5, help=mes)
+    mes = 'Wasserstein GAN clamp of weights'
+    parser.add_argument('--wgan-clamp', type=float, default=0.01, help=mes)
     mes = 'verbose level 0: nothing; 1: print error per utterance'
     mes = mes + ' (default: 1)'
     parser.add_argument('--verbose', type=int, default=0, metavar='N',

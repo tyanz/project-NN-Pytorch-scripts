@@ -1482,6 +1482,7 @@ class MelGANMultiScaleDiscriminator(torch.nn.Module):
         def _reset_parameters(m):
             if isinstance(m, torch.nn.Conv1d) or isinstance(m, torch.nn.ConvTranspose1d):
                 m.weight.data.normal_(0.0, 0.02)
+                #torch.nn.init.xavier_uniform_(m.weight, gain=torch.nn.init.calculate_gain('conv1d'))
 
         self.apply(_reset_parameters)
 

@@ -253,12 +253,12 @@ def f_run_one_epoch_WGAN(
     start_time = time.time()
     
     # number of critic (default 5)
-    if hasattr(args, "wgan-critic-num"):
+    if hasattr(args, "wgan_critic_num"):
         num_critic = args.wgan_critic_num
     else:
         num_critic = 5
     # clip value
-    if hasattr(args, "wgan-clamp"):
+    if hasattr(args, "wgan_clamp"):
         wgan_clamp = args.wgan_clamp
     else:
         wgan_clamp = 0.01
