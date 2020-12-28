@@ -119,7 +119,7 @@ def main():
                                            optimizer_wrapper,
                                            trn_set, val_set, checkpoint)
         else:
-            nii_gan_wrapper.f_train_wrapper(args, model, discriminator,
+            nii_gan_wrapper.f_train_wrapper_GAN(args, model, discriminator,
                                            loss_wrapper, device,
                                            optimizer_wrapper, optimizer_D_wrapper,
                                            trn_set, val_set, checkpoint)

@@ -12,6 +12,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import time
 import datetime
+from tqdm import tqdm
 
 import core_scripts.data_io.conf as nii_dconf
 import core_scripts.other_tools.display as nii_display
@@ -103,8 +104,10 @@ def f_run_one_epoch_GAN(
     start_time = time.time()
         
     # loop over samples
-    for data_idx, (data_in, data_tar, data_info, idx_orig) in \
-        enumerate(data_loader):
+    pbar = tqdm(data_loader)
+    epoch_num = monitor.get_max_epoch()
+    for data_idx, (data_in, data_tar, data_info, idx_orig) in enumerate(pbar):
+        pbar.set_description("Epoch: {}/{}".format(epoch_idx, epoch_num))
         
         # send data to device
         if optimizer_G is not None:
@@ -162,10 +165,10 @@ def f_run_one_epoch_GAN(
             else:
                 # normal case for model.forward(input)
                 data_gen = pt_model_G(data_in)
-            
+           
         # data_gen.detach() is required
         # https://github.com/pytorch/examples/issues/116
-        d_out_fake = pt_model_D(data_gen.detach())
+        d_out_fake = pt_model_D(data_gen[0].unsqueeze(1).detach())
         errD_fake = loss_wrapper.compute_gan_D_fake(d_out_fake)
         if optimizer_D is not None:
             errD_fake.backward()
@@ -178,7 +181,7 @@ def f_run_one_epoch_GAN(
         # Update Generator 
         ############################
         pt_model_G.zero_grad()
-        d_out_fake_for_G = pt_model_D(data_gen)
+        d_out_fake_for_G = pt_model_D(data_gen[0].unsqueeze(1))
         errG_gan = loss_wrapper.compute_gan_G(d_out_fake_for_G)
 
         # if defined, calculate auxilliart loss
@@ -262,8 +265,10 @@ def f_run_one_epoch_WGAN(
         
 
     # loop over samples
-    for data_idx, (data_in, data_tar, data_info, idx_orig) in \
-        enumerate(data_loader):
+    pbar = tqdm(data_loader)
+    epoch_num = monitor.get_max_epoch()
+    for data_idx, (data_in, data_tar, data_info, idx_orig) in enumerate(pbar):
+        pbar.set_description("Epoch: {}/{}".format(epoch_idx, epoch_num))
         
         # send data to device
         if optimizer_G is not None:
@@ -322,7 +327,7 @@ def f_run_one_epoch_WGAN(
             
         # data_gen.detach() is required
         # https://github.com/pytorch/examples/issues/116
-        d_out_fake = pt_model_D(data_gen.detach())
+        d_out_fake = pt_model_D(data_gen[0].unsqueeze(1).detach())
         errD_fake = loss_wrapper.compute_gan_D_fake(d_out_fake)
         if optimizer_D is not None:
             errD_fake.backward()
@@ -340,7 +345,7 @@ def f_run_one_epoch_WGAN(
         # Update Generator 
         ############################
         pt_model_G.zero_grad()
-        d_out_fake_for_G = pt_model_D(data_gen)
+        d_out_fake_for_G = pt_model_D(data_gen[0].unsqueeze(1))
         errG_gan = loss_wrapper.compute_gan_G(d_out_fake_for_G)
         errG_aux = loss_wrapper.compute_aux(data_gen, data_tar)
         errG = errG_gan + errG_aux

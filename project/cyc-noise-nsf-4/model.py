@@ -1104,6 +1104,8 @@ class Loss():
         self.mask_power_threshold = 0.0000001
         # loss function
         self.loss = torch_nn.MSELoss()
+        # wgan flag
+        self.flag_wgan = args.use_wgan
 
     def _stft(self, signal, fft_p, frame_shift, frame_len):
         """ wrapper of torch.stft
@@ -1215,23 +1217,38 @@ class Loss():
         # done
         return loss
 
+    def compute_aux(self, outputs, target):
+        return self.compute(outputs, target)
+
     def compute_gan_D_real(self, d_out):
         """
         Let Discriminator's outputs on real samples be close to ones
+        input is a list of list of each discriminator outputs consisting of each layer output tensors
         """
-        return self.loss(d_out, d_out.new_ones(d_out.size()))
+        if not self.flag_wgan:
+            return self.loss(d_out, d_out.new_ones(d_out.size()))
+        else:
+            return -1 * d_out.mean()
 
     def compute_gan_D_fake(self, d_out):
         """
         Let Discriminator's outputs on fake samples be close to zeros
+        input is a list of list of each discriminator outputs consisting of each layer output tensors
         """
-        return self.loss(d_out, d_out.new_zeros(d_out.size()))
+        if not self.flag_wgan:
+            return self.loss(d_out, d_out.new_zeros(d_out.size()))
+        else:
+            return d_out.mean()
 
     def compute_gan_G(self, d_out):
         """
         Let Discriminator's outputs on fake samples be close to ones
+        input is a list of list of each discriminator outputs consisting of each layer output tensors
         """
-        return self.loss(d_out, d_out.new_ones(d_out.size()))
+        if not self.flag_wgan:
+            return self.loss(d_out, d_out.new_ones(d_out.size()))
+        else:
+            return -1 * d_out.mean()
 
     
 class MelGANDiscriminator(torch.nn.Module):
@@ -1242,9 +1259,9 @@ class MelGANDiscriminator(torch.nn.Module):
                  out_channels=1,
                  kernel_sizes=[5, 3],
                  channels=16,
-                 max_downsample_channels=1024,
+                 max_downsample_channels=640,
                  bias=True,
-                 downsample_scales=[4, 4, 4, 4],
+                 downsample_scales=[5, 4, 4, 2],
                  nonlinear_activation="LeakyReLU",
                  nonlinear_activation_params={"negative_slope": 0.2},
                  pad="ReflectionPad1d",
@@ -1339,7 +1356,6 @@ class MelGANDiscriminator(torch.nn.Module):
         for f in self.layers:
             x = f(x)
             outs += [x]
-
         return outs
 
 
@@ -1360,9 +1376,9 @@ class MelGANMultiScaleDiscriminator(torch.nn.Module):
                  },
                  kernel_sizes=[5, 3],
                  channels=16,
-                 max_downsample_channels=1024,
+                 max_downsample_channels=640,
                  bias=True,
-                 downsample_scales=[4, 4, 4, 4],
+                 downsample_scales=[5, 4, 4, 2],
                  nonlinear_activation="LeakyReLU",
                  nonlinear_activation_params={"negative_slope": 0.2},
                  pad="ReflectionPad1d",
@@ -1429,10 +1445,13 @@ class MelGANMultiScaleDiscriminator(torch.nn.Module):
 
         """
         outs = []
+        if x.size(2) == 1:
+            x = torch.transpose(x, 1, 2)
         for f in self.discriminators:
             outs += [f(x)]
             x = self.pooling(x)
 
+        outs = torch.cat(tuple(out[-1] for out in outs), dim=2)
         return outs
 
     def remove_weight_norm(self):
